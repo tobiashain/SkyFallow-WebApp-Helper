@@ -1,0 +1,55 @@
+// ConditionDisplay.scss
+
+.condition-display {
+  margin-left: 1rem;
+  border-left: 2px solid #ccc;
+  padding-left: 0.75rem;
+
+  // Modifiers for different composite types
+  &--and {
+    border-left-color: #4caf50; // green for AND
+  }
+
+  &--or {
+    border-left-color: #2196f3; // blue for OR
+  }
+
+  &--not {
+    border-left-color: #f44336; // red for NOT
+  }
+
+  &__label {
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    display: block;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__item {
+    margin-top: 0.25rem;
+  }
+
+  &__content {
+    margin-left: 1rem;
+  }
+
+  &__always {
+    font-style: italic;
+    color: #888;
+  }
+
+  &__leaf {
+    color: #333;
+  }
+
+  &__unknown {
+    color: #f44336;
+    font-style: italic;
+  }
+}

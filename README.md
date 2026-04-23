@@ -51,7 +51,7 @@ If you previously exported a schedule file, import it to continue editing. All e
 
 The web app exports a file that must be placed at `res://data/npc_schedules.json` in the Godot project. Its format exactly matches what `create_npc_schedules.gd` expects.
 
-See the [JSON structure reference](#json-structure) below.
+See the [JSON structure reference](#example-json) below.
 
 ## Condition System
 
@@ -90,6 +90,7 @@ Conditions can be nested arbitrarily deep.
       "id": "martha",
       "entries": [
         {
+          "description": "Day 3 special (player met Martha)",
           "entry_condition": {
             "type": "AndCondition",
             "sub_conditions": [
@@ -103,20 +104,11 @@ Conditions can be nested arbitrarily deep.
               "scene": 0,
               "target_node": "Farm/House/Bed",
               "point_condition": null
-            },
-            {
-              "time": 1200,
-              "scene": 1,
-              "target_node": "FarmerHouse/Kitchen/Table",
-              "point_condition": {
-                "type": "FriendshipCondition",
-                "npc_id": "player",
-                "required_hearts": 5
-              }
             }
           ]
         },
         {
+          "description": "Default schedule",
           "entry_condition": null,
           "points": [
             { "time": 900, "scene": 0, "target_node": "Farm/Field/Plot1" }

@@ -1,0 +1,74 @@
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 20px;
+}
+
+.settings {
+  height: 20svh;
+  display: grid;
+  gap: 10px;
+  grid-template: 2fr 1fr / 2fr 2fr 1fr;
+  align-items: center;
+  justify-content: center;
+
+  &__stats {
+    align-self: start;
+  }
+}
+
+.creator {
+  background-color: bisque;
+  height: 70svh;
+  padding: 20px;
+  overflow: auto;
+}
+
+.npc {
+  display: flex;
+  gap: 10px;
+}
+
+.schedules {
+  height: 7svh;
+  background-color: rgb(255, 210, 155);
+  display: flex;
+  flex-wrap: nowrap;
+
+  &__create {
+    width: 100px;
+    background-color: rgb(252, 175, 82);
+  }
+
+  &-item {
+    padding: 5px;
+    border: 1px black solid;
+    max-width: 400px;
+    overflow: auto;
+  }
+}
+
+.schedules-condition {
+}
+
+.schedule-points {
+  margin-top: 10px;
+}
+
+.schedule-point {
+  margin-top: 10px;
+  border-bottom: 1px solid black;
+  padding-bottom: 5px;
+
+  &__time,
+  &__scene,
+  &__target {
+    display: flex;
+    gap: 10px;
+  }
+}
