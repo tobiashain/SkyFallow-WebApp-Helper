@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.scss";
 import { FileImporter } from "./FileImporter";
 import type {
@@ -58,29 +58,104 @@ function App() {
     localStorage.setItem("scheduleData", JSON.stringify(data));
   };
 
-  const exportSchedules = () => {
+  const exportSchedules = async () => {
     if (!schedules) return;
-    const blob = new Blob([JSON.stringify(schedules, null, 2)], {
-      type: "application/json",
-    });
+    const jsonString = JSON.stringify(schedules, null, 2);
+
+    // Try modern file picker (opens native Save As dialog)
+    if ("showSaveFilePicker" in window) {
+      try {
+        const handle = await (window as any).showSaveFilePicker({
+          suggestedName: "npc_schedules.json",
+          types: [
+            {
+              description: "JSON file",
+              accept: { "application/json": [".json"] },
+            },
+          ],
+        });
+        const writable = await handle.createWritable();
+        await writable.write(jsonString);
+        await writable.close();
+        return;
+      } catch (err) {
+        // User cancelled or error – do nothing
+        console.warn("Save cancelled or failed", err);
+        return;
+      }
+    }
+
+    // Fallback: anchor element (works everywhere)
+    const blob = new Blob([jsonString], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = "npc_schedules.json";
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
-  // ---------- Schedule manipulation helpers ----------
-  const updateNpcEntries = (npcId: string, entries: ScheduleEntry[]) => {
+  const reorderEntries = (
+    npcId: string,
+    fromIndex: number,
+    toIndex: number,
+  ) => {
     setSchedules((prev) => {
       if (!prev) return prev;
-      const newSchedules = prev.npc_schedules.map((s) =>
-        s.id === npcId ? { ...s, entries } : s,
-      );
+      const newSchedules = prev.npc_schedules.map((s) => {
+        if (s.id === npcId) {
+          const entries = [...s.entries];
+          const [moved] = entries.splice(fromIndex, 1);
+          entries.splice(toIndex, 0, moved);
+          return { ...s, entries };
+        }
+        return s;
+      });
       return { ...prev, npc_schedules: newSchedules };
     });
+
+    // Keep the selected entry under the cursor if it was the one moved
+    setSelectedEntryIndex((current) => {
+      if (current === fromIndex) return toIndex;
+      if (current === null) return null;
+      // Adjust the index if the selected entry was shifted
+      if (fromIndex < toIndex) {
+        if (current > fromIndex && current <= toIndex) return current - 1;
+      } else {
+        if (current >= toIndex && current < fromIndex) return current + 1;
+      }
+      return current;
+    });
   };
+
+  // Drag state (we use a ref to avoid re-rendering on every drag)
+  const dragIndex = useRef<number | null>(null);
+
+  const handleDragStart = (index: number) => {
+    dragIndex.current = index;
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    // Optional: set drop effect
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    const fromIndex = dragIndex.current;
+    if (fromIndex === null || fromIndex === dropIndex) return;
+    reorderEntries(selectedNpc, fromIndex, dropIndex);
+    dragIndex.current = null;
+  };
+
+  const handleDragEnd = () => {
+    dragIndex.current = null;
+  };
+
+  // ---------- Schedule manipulation helpers ----------
 
   const addNpcSchedule = (npcId: string) => {
     setSchedules((prev) => {
@@ -321,6 +396,11 @@ function App() {
                         selectedEntryIndex === idx ? "selected" : ""
                       }`}
                       key={idx}
+                      draggable
+                      onDragStart={() => handleDragStart(idx)}
+                      onDragOver={(e) => handleDragOver(e, idx)}
+                      onDrop={(e) => handleDrop(e, idx)}
+                      onDragEnd={handleDragEnd}
                       onClick={() => setSelectedEntryIndex(idx)}
                     >
                       <div className="schedules-item__description">
