@@ -1,0 +1,109 @@
+.editable-condition {
+  border-left: 2px solid #ccc;
+  margin-left: 1rem;
+  padding-left: 0.75rem;
+  margin-top: 0.25rem;
+
+  &.condition--and {
+    border-left-color: #4caf50; /* green */
+  }
+  &.condition--or {
+    border-left-color: #2196f3; /* blue */
+  }
+  &.condition--not {
+    border-left-color: #f44336; /* red */
+  }
+}
+
+.condition-header {
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.condition-label {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: inherit;
+  min-width: 40px;
+}
+
+.condition-body {
+  margin-top: 0.25rem;
+}
+
+.sub-conditions {
+  margin-left: 1rem;
+}
+
+.sub-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.25rem;
+}
+
+.not-body {
+  margin-left: 1rem;
+}
+
+.leaf-value {
+  display: inline;
+}
+
+// Inline editable styling
+.inline-input {
+  font: inherit;
+  color: inherit;
+  border: none;
+  border-bottom: 1px dashed #aaa;
+  background: transparent;
+  width: auto;
+  max-width: 120px;
+  padding: 0 2px;
+  outline: none;
+}
+
+.inline-select {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  appearance: none;
+  -webkit-appearance: none;
+  border-bottom: 1px dashed #aaa;
+  padding-right: 15px;
+  cursor: pointer;
+}
+
+.click-to-edit {
+  cursor: pointer;
+  border-bottom: 1px dashed transparent;
+  &:hover {
+    border-bottom-color: #aaa;
+  }
+}
+
+.add-condition-btn,
+.add-sub-btn {
+  font: inherit;
+  font-size: 0.85rem;
+  background: none;
+  border: 1px dashed #aaa;
+  padding: 2px 6px;
+  cursor: pointer;
+  margin-top: 2px;
+  border-radius: 4px;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #f00;
+  cursor: pointer;
+  padding: 0 4px;
+  font-size: 0.9rem;
+  &.small {
+    font-size: 0.8rem;
+  }
+}

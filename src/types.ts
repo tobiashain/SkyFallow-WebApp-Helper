@@ -1,5 +1,3 @@
-// types.ts
-
 export interface BakedTile {
   w: number;
   p: number;
@@ -85,7 +83,6 @@ export interface NpcSchedulesFile {
   npc_schedules: NPCScheduleData[];
 }
 
-// Transformed shape used inside the editor
 export interface TransformedScene {
   id: number;
   name: string;

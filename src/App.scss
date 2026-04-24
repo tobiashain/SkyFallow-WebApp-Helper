@@ -53,9 +53,6 @@ body {
   }
 }
 
-.schedules-condition {
-}
-
 .schedule-points {
   margin-top: 10px;
 }
@@ -71,4 +68,82 @@ body {
     display: flex;
     gap: 10px;
   }
+}
+
+.schedule-editor {
+  margin-top: 20px;
+}
+
+.schedules-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.schedules-item {
+  padding: 8px;
+  border: 1px solid #333;
+  background: #ffe3aa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &.selected {
+    outline: 2px solid #2196f3;
+    background: #ffd27f;
+  }
+
+  &__description {
+    max-width: 300px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.entry-details {
+  background: #fff8e1;
+  padding: 15px;
+  border: 1px solid #ccc;
+}
+
+.form-group {
+  margin-bottom: 10px;
+  label {
+    font-weight: bold;
+    margin-right: 8px;
+  }
+}
+
+.points-section {
+  margin-top: 15px;
+}
+
+.point-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.add-entry-btn,
+.add-point-btn {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  font: inherit;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
+.entry-details .form-group .inline-input.full-width,
+.entry-details .form-group input[type="text"].inline-input {
+  width: 100%;
+  max-width: none;
 }
