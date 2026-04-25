@@ -12,8 +12,13 @@ import type {
 } from "./types";
 import { transformBakedData } from "./transformBakedData";
 import { EditableCondition } from "./EditableCondition";
+import { TimelineTableEditor } from "./Timeline/TimelineTableEditor";
+
+type Tab = "schedules" | "timelines";
 
 function App() {
+  const [activeTab, setActiveTab] = useState<Tab>("schedules");
+
   const [rawBaked, setRawBaked] = useState<NpcNavBaked | null>(null);
   const [scenes, setScenes] = useState<TransformedScene[]>([]);
   const [schedules, setSchedules] = useState<NpcSchedulesFile | null>(null);
@@ -359,255 +364,286 @@ function App() {
           <div></div>
         )}
       </header>
-      <main className="creator">
-        <div className="npc">
-          <label htmlFor="npc__select">Select NPC</label>
-          <select
-            name="npc__select"
-            id="npc__select"
-            value={selectedNpc}
-            onChange={handleSelectedNpc}
-          >
-            <option value="">-- choose --</option>
-            {allNpcs.map((npc) => (
-              <option key={npc.id} value={npc.id}>
-                {npc.id} ({npc.sceneName})
-              </option>
-            ))}
-          </select>
-        </div>
 
-        {selectedNpc && (
-          <div className="schedule-editor">
-            {!currentNpcSchedule ? (
-              <div>
-                <p>No schedule for this NPC yet.</p>
-                <button onClick={() => addNpcSchedule(selectedNpc)}>
-                  Create schedule
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="schedules-list">
-                  <h3>Schedule Entries</h3>
-                  {currentNpcSchedule.entries.map((entry, idx) => (
-                    <div
-                      className={`schedules-item ${
-                        selectedEntryIndex === idx ? "selected" : ""
-                      }`}
-                      key={idx}
-                      draggable
-                      onDragStart={() => handleDragStart(idx)}
-                      onDragOver={(e) => handleDragOver(e, idx)}
-                      onDrop={(e) => handleDrop(e, idx)}
-                      onDragEnd={handleDragEnd}
-                      onClick={() => setSelectedEntryIndex(idx)}
-                    >
-                      <div className="schedules-item__description">
-                        {entry.description || "(no description)"}
-                      </div>
-                      <button
-                        className="delete-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteEntry(selectedNpc, idx);
-                        }}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                  <button
-                    className="add-entry-btn"
-                    onClick={() => addEntry(selectedNpc)}
-                  >
-                    + Add Entry
+      {/* ── Tab bar ── */}
+      <nav className="tab-bar">
+        <button
+          className={`tab-bar__tab ${activeTab === "schedules" ? "tab-bar__tab--active" : ""}`}
+          onClick={() => setActiveTab("schedules")}
+        >
+          NPC Schedules
+        </button>
+        <button
+          className={`tab-bar__tab ${activeTab === "timelines" ? "tab-bar__tab--active" : ""}`}
+          onClick={() => setActiveTab("timelines")}
+        >
+          Dialogic Timeline Table
+        </button>
+      </nav>
+
+      {/* ── Schedules tab ── */}
+      {activeTab === "schedules" && (
+        <main className="creator">
+          <div className="npc">
+            <label htmlFor="npc__select">Select NPC</label>
+            <select
+              name="npc__select"
+              id="npc__select"
+              value={selectedNpc}
+              onChange={handleSelectedNpc}
+            >
+              <option value="">-- choose --</option>
+              {allNpcs.map((npc) => (
+                <option key={npc.id} value={npc.id}>
+                  {npc.id} ({npc.sceneName})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {selectedNpc && (
+            <div className="schedule-editor">
+              {!currentNpcSchedule ? (
+                <div>
+                  <p>No schedule for this NPC yet.</p>
+                  <button onClick={() => addNpcSchedule(selectedNpc)}>
+                    Create schedule
                   </button>
                 </div>
+              ) : (
+                <>
+                  <div className="schedules-list">
+                    <h3>Schedule Entries</h3>
+                    {currentNpcSchedule.entries.map((entry, idx) => (
+                      <div
+                        className={`schedules-item ${
+                          selectedEntryIndex === idx ? "selected" : ""
+                        }`}
+                        key={idx}
+                        draggable
+                        onDragStart={() => handleDragStart(idx)}
+                        onDragOver={(e) => handleDragOver(e, idx)}
+                        onDrop={(e) => handleDrop(e, idx)}
+                        onDragEnd={handleDragEnd}
+                        onClick={() => setSelectedEntryIndex(idx)}
+                      >
+                        <div className="schedules-item__description">
+                          {entry.description || "(no description)"}
+                        </div>
+                        <button
+                          className="delete-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteEntry(selectedNpc, idx);
+                          }}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      className="add-entry-btn"
+                      onClick={() => addEntry(selectedNpc)}
+                    >
+                      + Add Entry
+                    </button>
+                  </div>
 
-                {selectedEntryIndex !== null &&
-                  currentNpcSchedule.entries[selectedEntryIndex] && (
-                    <div className="entry-details">
-                      {(() => {
-                        const entry =
-                          currentNpcSchedule.entries[selectedEntryIndex];
-                        const handleEntryChange = (newEntry: ScheduleEntry) => {
-                          updateEntry(
-                            selectedNpc,
-                            selectedEntryIndex,
-                            newEntry,
-                          );
-                        };
+                  {selectedEntryIndex !== null &&
+                    currentNpcSchedule.entries[selectedEntryIndex] && (
+                      <div className="entry-details">
+                        {(() => {
+                          const entry =
+                            currentNpcSchedule.entries[selectedEntryIndex];
+                          const handleEntryChange = (
+                            newEntry: ScheduleEntry,
+                          ) => {
+                            updateEntry(
+                              selectedNpc,
+                              selectedEntryIndex,
+                              newEntry,
+                            );
+                          };
 
-                        return (
-                          <>
-                            <div className="form-group">
-                              <label>Description</label>
-                              <input
-                                className="inline-input full-width"
-                                type="text"
-                                value={entry.description ?? ""}
-                                onChange={(e) =>
-                                  handleEntryChange({
-                                    ...entry,
-                                    description: e.target.value,
-                                  })
-                                }
-                              />
-                            </div>
+                          return (
+                            <>
+                              <div className="form-group">
+                                <label>Description</label>
+                                <input
+                                  className="inline-input full-width"
+                                  type="text"
+                                  value={entry.description ?? ""}
+                                  onChange={(e) =>
+                                    handleEntryChange({
+                                      ...entry,
+                                      description: e.target.value,
+                                    })
+                                  }
+                                />
+                              </div>
 
-                            <div className="form-group">
-                              <label>Entry Condition</label>
-                              <EditableCondition
-                                condition={entry.entry_condition}
-                                onChange={(cond) =>
-                                  handleEntryChange({
-                                    ...entry,
-                                    entry_condition: cond,
-                                  })
-                                }
-                                npcOptions={npcOptions}
-                              />
-                            </div>
+                              <div className="form-group">
+                                <label>Entry Condition</label>
+                                <EditableCondition
+                                  condition={entry.entry_condition}
+                                  onChange={(cond) =>
+                                    handleEntryChange({
+                                      ...entry,
+                                      entry_condition: cond,
+                                    })
+                                  }
+                                  npcOptions={npcOptions}
+                                />
+                              </div>
 
-                            <div className="points-section">
-                              <h4>Schedule Points</h4>
-                              {entry.points.map((point, pIdx) => (
-                                <div className="schedule-point" key={pIdx}>
-                                  <div className="point-row">
-                                    <div className="form-group">
-                                      <label>Time</label>
-                                      <input
-                                        className="inline-input"
-                                        type="number"
-                                        value={point.time}
-                                        onChange={(e) => {
-                                          const newPoint = {
-                                            ...point,
-                                            time: Number(e.target.value),
-                                          };
-                                          updatePoint(
-                                            selectedNpc,
-                                            selectedEntryIndex,
-                                            pIdx,
-                                            newPoint,
-                                          );
-                                        }}
-                                      />
-                                    </div>
+                              <div className="points-section">
+                                <h4>Schedule Points</h4>
+                                {entry.points.map((point, pIdx) => (
+                                  <div className="schedule-point" key={pIdx}>
+                                    <div className="point-row">
+                                      <div className="form-group">
+                                        <label>Time</label>
+                                        <input
+                                          className="inline-input"
+                                          type="number"
+                                          value={point.time}
+                                          onChange={(e) => {
+                                            const newPoint = {
+                                              ...point,
+                                              time: Number(e.target.value),
+                                            };
+                                            updatePoint(
+                                              selectedNpc,
+                                              selectedEntryIndex,
+                                              pIdx,
+                                              newPoint,
+                                            );
+                                          }}
+                                        />
+                                      </div>
 
-                                    <div className="form-group">
-                                      <label>Scene</label>
-                                      <select
-                                        className="inline-select"
-                                        value={point.scene}
-                                        onChange={(e) => {
-                                          const scene = Number(e.target.value);
-                                          const newPoint: SchedulePoint = {
-                                            ...point,
-                                            scene,
-                                            target_node: "", // reset target when scene changes
-                                          };
-                                          updatePoint(
-                                            selectedNpc,
-                                            selectedEntryIndex,
-                                            pIdx,
-                                            newPoint,
-                                          );
-                                        }}
-                                      >
-                                        {sceneOptions.map((s) => (
-                                          <option key={s.id} value={s.id}>
-                                            {s.id} – {s.name}
-                                          </option>
-                                        ))}
-                                      </select>
-                                    </div>
-
-                                    <div className="form-group">
-                                      <label>Target</label>
-                                      <select
-                                        className="inline-select"
-                                        value={point.target_node}
-                                        onChange={(e) => {
-                                          const newPoint = {
-                                            ...point,
-                                            target_node: e.target.value,
-                                          };
-                                          updatePoint(
-                                            selectedNpc,
-                                            selectedEntryIndex,
-                                            pIdx,
-                                            newPoint,
-                                          );
-                                        }}
-                                      >
-                                        <option value="">-- choose --</option>
-                                        {targetsForScene(point.scene).map(
-                                          (t, tIdx) => (
-                                            <option key={tIdx} value={t.path}>
-                                              {t.path}
+                                      <div className="form-group">
+                                        <label>Scene</label>
+                                        <select
+                                          className="inline-select"
+                                          value={point.scene}
+                                          onChange={(e) => {
+                                            const scene = Number(
+                                              e.target.value,
+                                            );
+                                            const newPoint: SchedulePoint = {
+                                              ...point,
+                                              scene,
+                                              target_node: "", // reset target when scene changes
+                                            };
+                                            updatePoint(
+                                              selectedNpc,
+                                              selectedEntryIndex,
+                                              pIdx,
+                                              newPoint,
+                                            );
+                                          }}
+                                        >
+                                          {sceneOptions.map((s) => (
+                                            <option key={s.id} value={s.id}>
+                                              {s.id} – {s.name}
                                             </option>
-                                          ),
-                                        )}
-                                      </select>
-                                    </div>
+                                          ))}
+                                        </select>
+                                      </div>
 
-                                    <div className="form-group">
-                                      <label>Point Condition</label>
-                                      <EditableCondition
-                                        condition={point.point_condition}
-                                        onChange={(cond) => {
-                                          const newPoint = {
-                                            ...point,
-                                            point_condition: cond,
-                                          };
-                                          updatePoint(
+                                      <div className="form-group">
+                                        <label>Target</label>
+                                        <select
+                                          className="inline-select"
+                                          value={point.target_node}
+                                          onChange={(e) => {
+                                            const newPoint = {
+                                              ...point,
+                                              target_node: e.target.value,
+                                            };
+                                            updatePoint(
+                                              selectedNpc,
+                                              selectedEntryIndex,
+                                              pIdx,
+                                              newPoint,
+                                            );
+                                          }}
+                                        >
+                                          <option value="">-- choose --</option>
+                                          {targetsForScene(point.scene).map(
+                                            (t, tIdx) => (
+                                              <option key={tIdx} value={t.path}>
+                                                {t.path}
+                                              </option>
+                                            ),
+                                          )}
+                                        </select>
+                                      </div>
+
+                                      <div className="form-group">
+                                        <label>Point Condition</label>
+                                        <EditableCondition
+                                          condition={point.point_condition}
+                                          onChange={(cond) => {
+                                            const newPoint = {
+                                              ...point,
+                                              point_condition: cond,
+                                            };
+                                            updatePoint(
+                                              selectedNpc,
+                                              selectedEntryIndex,
+                                              pIdx,
+                                              newPoint,
+                                            );
+                                          }}
+                                          npcOptions={npcOptions}
+                                        />
+                                      </div>
+
+                                      <button
+                                        className="delete-btn"
+                                        onClick={() =>
+                                          deletePoint(
                                             selectedNpc,
                                             selectedEntryIndex,
                                             pIdx,
-                                            newPoint,
-                                          );
-                                        }}
-                                        npcOptions={npcOptions}
-                                      />
+                                          )
+                                        }
+                                      >
+                                        ✕ Point
+                                      </button>
                                     </div>
-
-                                    <button
-                                      className="delete-btn"
-                                      onClick={() =>
-                                        deletePoint(
-                                          selectedNpc,
-                                          selectedEntryIndex,
-                                          pIdx,
-                                        )
-                                      }
-                                    >
-                                      ✕ Point
-                                    </button>
                                   </div>
-                                </div>
-                              ))}
+                                ))}
 
-                              <button
-                                className="add-point-btn"
-                                onClick={() =>
-                                  addPoint(selectedNpc, selectedEntryIndex)
-                                }
-                              >
-                                + Add Schedule Point
-                              </button>
-                            </div>
-                          </>
-                        );
-                      })()}
-                    </div>
-                  )}
-              </>
-            )}
-          </div>
-        )}
-      </main>
+                                <button
+                                  className="add-point-btn"
+                                  onClick={() =>
+                                    addPoint(selectedNpc, selectedEntryIndex)
+                                  }
+                                >
+                                  + Add Schedule Point
+                                </button>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    )}
+                </>
+              )}
+            </div>
+          )}
+        </main>
+      )}
+
+      {/* ── Timeline Table tab ── */}
+      {activeTab === "timelines" && (
+        <main className="creator">
+          <TimelineTableEditor npcOptions={npcOptions} />
+        </main>
+      )}
     </>
   );
 }

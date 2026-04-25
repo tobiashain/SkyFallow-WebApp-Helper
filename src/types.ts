@@ -46,6 +46,9 @@ export type ConditionType =
   | "WeekdayCondition"
   | "FlagCondition"
   | "FriendshipCondition"
+  | "DayFromCondition"
+  | "SeenFirstCondition"
+  | "HourRangeCondition"
   | "AndCondition"
   | "OrCondition"
   | "NotCondition";

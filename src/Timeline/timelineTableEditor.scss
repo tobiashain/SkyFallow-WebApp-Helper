@@ -1,0 +1,460 @@
+// Uses the same CSS variables as App.scss
+
+.tl-editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  overflow: hidden;
+  min-height: 0;
+  position: relative;
+  padding-bottom: 48px; // room for footer
+}
+
+// ── Sidebar ────────────────────────────────────────────────────────────────────
+
+.tl-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  border-right: 2px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 48px;
+  overflow-y: auto;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    background: #faf9f7;
+  }
+
+  &__title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  &__add {
+    select,
+    input {
+      width: 100%;
+    }
+  }
+
+  &__manual-add {
+    display: flex;
+    gap: 4px;
+
+    input {
+      flex: 1;
+    }
+
+    button {
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 2px 8px;
+      font: inherit;
+      font-weight: 700;
+
+      &:hover {
+        background: #009b8e;
+      }
+    }
+  }
+
+  &__empty {
+    color: var(--muted);
+    font-size: 11px;
+    padding: 10px;
+    text-align: center;
+  }
+}
+
+.tl-npc-item {
+  padding: 7px 10px;
+  border-bottom: 1px solid #f0ece6;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &:hover {
+    background: #fdf8ee;
+  }
+
+  &--active {
+    background: #fff4d9;
+    border-left: 3px solid var(--orange);
+    padding-left: 7px;
+  }
+
+  &__id {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-weight: 600;
+  }
+
+  &__count {
+    font-size: 10px;
+    background: #e8e4dd;
+    color: var(--muted);
+    border-radius: 10px;
+    padding: 1px 6px;
+    flex-shrink: 0;
+  }
+}
+
+// ── Main panel ─────────────────────────────────────────────────────────────────
+
+.tl-main {
+  position: absolute;
+  top: 0;
+  left: 200px;
+  right: 0;
+  bottom: 48px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+
+  &__placeholder {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: #faf9f7;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  &__npc-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+}
+
+// ── Weight bar ────────────────────────────────────────────────────────────────
+
+.tl-weight-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex: 1;
+  gap: 2px;
+
+  $colors:
+    #4a90e2, #00b4a6, #ff8c42, #e24a8a, #3dbb6e, #ffd94a, #9b59b6, #e74c3c;
+
+  @for $i from 1 through 8 {
+    &__segment:nth-child(#{$i}) {
+      background: nth($colors, $i);
+      min-width: 4px;
+    }
+  }
+
+  &__segment {
+    transition: flex 0.2s ease;
+    cursor: default;
+  }
+}
+
+// ── Entries ───────────────────────────────────────────────────────────────────
+
+.tl-entries {
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__empty {
+    color: var(--muted);
+    font-size: 12px;
+    font-style: italic;
+    padding: 8px 0;
+  }
+}
+
+.tl-entry {
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #faf9f7;
+
+  &--expanded {
+    border-color: var(--blue);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      background: #f4f2ee;
+    }
+  }
+
+  &__index {
+    font-size: 10px;
+    color: var(--muted);
+    flex-shrink: 0;
+    width: 20px;
+  }
+
+  &__name {
+    flex: 1;
+    font-weight: 600;
+    min-width: 0;
+  }
+
+  &__weight-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+
+    label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+  }
+
+  &__weight {
+    width: 50px;
+  }
+
+  &__badge {
+    font-size: 10px;
+    background: var(--teal);
+    color: #fff;
+    border-radius: 10px;
+    padding: 1px 7px;
+    flex-shrink: 0;
+  }
+
+  &__chevron {
+    font-size: 9px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  &__body {
+    padding: 10px 12px 12px;
+    border-top: 1.5px solid var(--border);
+    background: #fff;
+  }
+}
+
+// ── Conditions grid ───────────────────────────────────────────────────────────
+
+.cond-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cond-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+
+  &--full {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+.cond-key {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  width: 110px;
+  flex-shrink: 0;
+}
+
+.cond-val {
+  flex: 1;
+  min-width: 80px;
+  max-width: 220px;
+
+  &.narrow {
+    max-width: 80px;
+    flex: none;
+  }
+}
+
+.cond-sep {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.cond-del {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 11px;
+  line-height: 1;
+
+  &:hover {
+    color: var(--pink);
+  }
+}
+
+.cond-structured {
+  width: 100%;
+}
+
+// ── Fallbacks ─────────────────────────────────────────────────────────────────
+
+.tl-fallbacks {
+  padding: 10px 14px 16px;
+  border-top: 2px solid var(--border);
+  margin-top: auto;
+
+  &__title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  &__hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #eef8f7;
+    border: 1px solid #b2e4df;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 12px;
+    color: var(--teal);
+    font-weight: 600;
+  }
+
+  &__add {
+    display: flex;
+    gap: 6px;
+
+    input {
+      flex: 1;
+      max-width: 280px;
+    }
+
+    button {
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 4px 12px;
+      font: inherit;
+      font-weight: 700;
+
+      &:hover {
+        background: #009b8e;
+      }
+    }
+  }
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+
+.tl-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border-top: 2px solid var(--border);
+  background: #faf9f7;
+}
+
+.tl-import-label {
+  border: 1.5px dashed #c8c0b4;
+  color: var(--muted);
+  padding: 5px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  font: inherit;
+
+  &:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+}
+
+.tl-export-btn {
+  background: var(--text);
+  color: var(--yellow);
+  border: none;
+  padding: 7px 14px;
+  cursor: pointer;
+  border-radius: 20px;
+  font: inherit;
+  font-weight: 700;
+  margin-left: auto;
+
+  &:hover {
+    background: #3d3530;
+  }
+}

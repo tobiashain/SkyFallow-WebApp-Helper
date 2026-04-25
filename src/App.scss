@@ -69,11 +69,47 @@ body {
   }
 }
 
+// ── Tab bar ───────────────────────────────────────────────────────────────────
+
+.tab-bar {
+  display: flex;
+  gap: 0;
+  background: #ede9e2;
+  border-bottom: 2px solid var(--border);
+  padding: 0 16px;
+
+  &__tab {
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    padding: 9px 16px 8px;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+
+    &:hover {
+      color: var(--text);
+    }
+
+    &--active {
+      color: var(--text);
+      border-bottom-color: var(--orange);
+    }
+  }
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 .creator {
   padding: 16px;
-  min-height: calc(100svh - 70px);
+  min-height: calc(100svh - 110px); // account for header + tab bar
   display: flex;
   flex-direction: column;
   gap: 14px;
