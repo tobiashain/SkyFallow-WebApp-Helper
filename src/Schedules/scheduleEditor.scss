@@ -1,0 +1,163 @@
+.npc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  label {
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+}
+
+.schedule-editor {
+  margin-top: 10px;
+  display: flex;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  overflow: hidden;
+  flex: 1;
+}
+
+.schedules-list {
+  width: 210px;
+  flex-shrink: 0;
+  border-right: 2px solid var(--border);
+  display: flex;
+  flex-direction: column;
+
+  h3 {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    background: #faf9f7;
+  }
+}
+
+.schedules-item {
+  padding: 7px 10px;
+  border-bottom: 1px solid #f0ece6;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: grab;
+
+  &:hover {
+    background: #fdf8ee;
+  }
+
+  &.selected {
+    background: #fff4d9;
+    border-left: 3px solid var(--orange);
+    padding-left: 7px;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &.drag-over {
+    border-top: 2px solid var(--blue);
+    margin-top: -2px;
+  }
+
+  &.dragging {
+    opacity: 0.4;
+  }
+
+  &__description {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.add-entry-btn {
+  margin: 8px;
+  background: none;
+  border: 1.5px dashed #c8c0b4;
+  color: var(--muted);
+  padding: 5px 8px;
+  cursor: pointer;
+  font: inherit;
+  border-radius: 5px;
+  text-align: left;
+
+  &:hover {
+    border-color: var(--teal);
+    color: var(--teal);
+  }
+}
+
+.entry-details {
+  flex: 1;
+  padding: 14px 16px;
+  overflow: auto;
+}
+
+.form-group {
+  margin-bottom: 12px;
+
+  label {
+    display: block;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+}
+
+.points-section {
+  margin-top: 16px;
+
+  h4 {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+}
+
+.schedule-point {
+  background: #faf9f7;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.point-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 12px;
+}
+
+.add-point-btn {
+  background: none;
+  border: 1.5px dashed #c8c0b4;
+  color: var(--muted);
+  padding: 5px 10px;
+  cursor: pointer;
+  font: inherit;
+  border-radius: 5px;
+  margin-top: 4px;
+
+  &:hover {
+    border-color: var(--teal);
+    color: var(--teal);
+  }
+}
