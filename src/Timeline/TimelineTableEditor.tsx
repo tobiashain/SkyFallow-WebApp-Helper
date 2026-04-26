@@ -236,8 +236,9 @@ export function TimelineTableEditor({ npcOptions }: Props) {
 
   // ── Derived data for the selected NPC ─────────────────────────────────
   const currentEntries = selectedNpc ? (table[selectedNpc] ?? []) : [];
+  const positiveEntries = currentEntries.filter((e) => e.weight !== -1);
+  const totalWeight = positiveEntries.reduce((s, e) => s + (e.weight || 0), 0);
   const currentFallbacks = selectedNpc ? (fallbacks[selectedNpc] ?? []) : [];
-  const totalWeight = currentEntries.reduce((s, e) => s + (e.weight || 0), 0);
 
   return (
     <div className="tl-editor">
@@ -317,8 +318,11 @@ export function TimelineTableEditor({ npcOptions }: Props) {
             <div className="tl-main__toolbar">
               <h3 className="tl-main__npc-title">{selectedNpc}</h3>
               {totalWeight > 0 && (
-                <div className="tl-weight-bar" title="Relative weights">
-                  {currentEntries.map((e, i) => (
+                <div
+                  className="tl-weight-bar"
+                  title="Relative weights (forced -1 excluded)"
+                >
+                  {positiveEntries.map((e, i) => (
                     <div
                       key={i}
                       className="tl-weight-bar__segment"

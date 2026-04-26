@@ -39,12 +39,15 @@ export function TimelineEntryRow({
           <input
             className="tl-entry__weight"
             type="number"
-            min={1}
+            min={-1}
             value={entry.weight}
             onClick={(e) => e.stopPropagation()}
-            onChange={(e) =>
-              onChange({ ...entry, weight: Number(e.target.value) || 1 })
-            }
+            onChange={(e) => {
+              let val = Number(e.target.value);
+              if (isNaN(val)) val = 1;
+              else if (val !== -1 && val < 1) val = 1;
+              onChange({ ...entry, weight: val });
+            }}
           />
         </div>
         {hasConditions && (
