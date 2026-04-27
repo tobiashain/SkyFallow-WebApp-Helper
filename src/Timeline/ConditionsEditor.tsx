@@ -18,7 +18,7 @@ export function ConditionsEditor({ conds, onChange, npcOptions }: Props) {
   };
 
   return (
-    <div className="cond-grid">
+    <>
       {/* day_from */}
       <div className="cond-row">
         <label className="cond-key">day_from</label>
@@ -115,6 +115,6 @@ export function ConditionsEditor({ conds, onChange, npcOptions }: Props) {
           />
         </div>
       </div>
-    </div>
+    </>
   );
 }

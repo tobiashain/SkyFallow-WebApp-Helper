@@ -11,12 +11,14 @@ export interface TimelineEntry {
   timeline: string;
   weight: number;
   conditions: TimelineConditions;
+  sets_flag?: string;
 }
 
 export interface ExportedTimelineEntry {
   timeline: string;
   weight: number;
   condition?: Condition | null;
+  sets_flag?: string;
 }
 
 export interface TimelineTableFile {

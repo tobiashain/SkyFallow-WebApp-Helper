@@ -50,6 +50,11 @@ export function TimelineEntryRow({
             }}
           />
         </div>
+        {entry.sets_flag && (
+          <span className="tl-entry__badge tl-entry__badge--flag">
+            🚩 {entry.sets_flag}
+          </span>
+        )}
         {hasConditions && (
           <span className="tl-entry__badge">
             {Object.keys(entry.conditions).length} cond
@@ -69,11 +74,28 @@ export function TimelineEntryRow({
 
       {isExpanded && (
         <div className="tl-entry__body">
-          <ConditionsEditor
-            conds={entry.conditions}
-            onChange={(c) => onChange({ ...entry, conditions: c })}
-            npcOptions={npcOptions}
-          />
+          <div className="cond-grid">
+            <div className="cond-row">
+              <label className="cond-key">sets_flag</label>
+              <input
+                className="cond-val"
+                type="text"
+                placeholder="e_met_farmer"
+                value={entry.sets_flag ?? ""}
+                onChange={(e) =>
+                  onChange({
+                    ...entry,
+                    sets_flag: e.target.value || undefined,
+                  })
+                }
+              />
+            </div>
+            <ConditionsEditor
+              conds={entry.conditions}
+              onChange={(c) => onChange({ ...entry, conditions: c })}
+              npcOptions={npcOptions}
+            />
+          </div>
         </div>
       )}
     </div>

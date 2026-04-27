@@ -92,6 +92,7 @@ export function normalizeEntry(
         ...extracted,
         condition: remainingCondition,
       },
+      sets_flag: (entry as any).sets_flag || undefined,
     } as TimelineEntry;
   }
 
@@ -106,6 +107,7 @@ export function normalizeEntry(
       ...extracted,
       condition: remainingCondition,
     },
+    sets_flag: (entry as any).sets_flag || undefined,
   };
 }
 
@@ -153,6 +155,7 @@ export function unflattenEntry(entry: TimelineEntry): ExportedTimelineEntry {
     timeline: entry.timeline,
     weight: entry.weight,
     condition: merged,
+    ...(entry.sets_flag ? { sets_flag: entry.sets_flag } : {}),
   };
 }
 
@@ -161,7 +164,7 @@ export function unflattenEntry(entry: TimelineEntry): ExportedTimelineEntry {
 // ---------------------------------------------------------------------------
 
 export function emptyEntry(): TimelineEntry {
-  return { timeline: "", weight: 1, conditions: {} };
+  return { timeline: "", weight: 1, conditions: {}, sets_flag: undefined };
 }
 
 export function exportJson(data: unknown, filename: string) {
