@@ -5,8 +5,8 @@ import type { NpcNavBaked, NpcSchedulesFile, TransformedScene } from "./types";
 import { transformBakedData } from "./transformBakedData";
 import { ScheduleEditor } from "./Schedules/Scheduleeditor";
 import { TimelineTableEditor } from "./Timeline/TimelineTableEditor";
-import { FlagRegistryEditor } from "./Flags/flagRegistryEditor";
-//import { SaveEditor } from "./Flags/SaveEditor";
+import { FlagRegistryEditor } from "./FlagRegistry/flagRegistryEditor";
+import { SaveEditor } from "./SaveEditor/SaveEditor";
 
 type Tab = "schedules" | "timelines" | "flags" | "save";
 
@@ -156,6 +156,12 @@ function App() {
       {activeTab === "flags" && (
         <main className="creator">
           <FlagRegistryEditor />
+        </main>
+      )}
+
+      {activeTab === "save" && (
+        <main className="creator">
+          <SaveEditor />
         </main>
       )}
     </>

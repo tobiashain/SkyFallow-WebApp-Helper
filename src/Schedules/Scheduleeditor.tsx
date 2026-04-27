@@ -242,7 +242,7 @@ export function ScheduleEditor({
     : undefined;
 
   return (
-    <div className="npc-selector-wrap">
+    <>
       <div className="npc">
         <label htmlFor="npc__select">Select NPC</label>
         <select
@@ -470,6 +470,6 @@ export function ScheduleEditor({
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }
