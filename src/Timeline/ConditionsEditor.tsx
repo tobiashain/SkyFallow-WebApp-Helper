@@ -5,9 +5,11 @@ interface Props {
   conds: TimelineConditions;
   onChange: (c: TimelineConditions) => void;
   npcOptions: string[];
+  flagOptions: string[];
+  timelineOptions?: string[];
 }
 
-export function ConditionsEditor({ conds, onChange, npcOptions }: Props) {
+export function ConditionsEditor({ conds, onChange, npcOptions, flagOptions, timelineOptions = [] }: Props) {
   const set = (key: keyof TimelineConditions, value: any) =>
     onChange({ ...conds, [key]: value === "" ? undefined : value });
 
@@ -90,13 +92,28 @@ export function ConditionsEditor({ conds, onChange, npcOptions }: Props) {
       {/* seen_first */}
       <div className="cond-row">
         <label className="cond-key">seen_first</label>
-        <input
-          className="cond-val"
-          type="text"
-          placeholder="timeline_id"
-          value={conds.seen_first ?? ""}
-          onChange={(e) => set("seen_first", e.target.value)}
-        />
+        {timelineOptions.length > 0 ? (
+          <select
+            className="cond-val"
+            value={conds.seen_first ?? ""}
+            onChange={(e) => set("seen_first", e.target.value)}
+          >
+            <option value="">-- none --</option>
+            {timelineOptions.map((id) => (
+              <option key={id} value={id}>
+                {id}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <input
+            className="cond-val"
+            type="text"
+            placeholder="timeline_id"
+            value={conds.seen_first ?? ""}
+            onChange={(e) => set("seen_first", e.target.value)}
+          />
+        )}
         {conds.seen_first !== undefined && conds.seen_first !== "" && (
           <button className="cond-del" onClick={() => del("seen_first")}>
             ✕
@@ -112,6 +129,7 @@ export function ConditionsEditor({ conds, onChange, npcOptions }: Props) {
             condition={conds.condition ?? null}
             onChange={(c) => set("condition", c)}
             npcOptions={npcOptions}
+            flagOptions={flagOptions}
           />
         </div>
       </div>

@@ -7,8 +7,20 @@ import type {
   SchedulePoint,
   TransformedScene,
 } from "../types";
+import type { FlagRegistry } from "../FlagRegistry/flagTypes";
 import { EditableCondition } from "../EditableCondition";
 import "./scheduleEditor.scss";
+
+function readFlagOptions(): string[] {
+  try {
+    const raw = localStorage.getItem("flag_registry");
+    if (!raw) return [];
+    const registry: FlagRegistry = JSON.parse(raw);
+    return registry.flags?.map((f) => f.id) ?? [];
+  } catch {
+    return [];
+  }
+}
 
 interface Props {
   rawBaked: NpcNavBaked | null;
@@ -33,6 +45,7 @@ export function ScheduleEditor({
     s.npcs.map((n) => ({ ...n, sceneName: s.name })),
   );
   const npcOptions = useMemo(() => allNpcs.map((n) => n.id), [allNpcs]);
+  const flagOptions = useMemo(() => readFlagOptions(), []);
 
   const scheduleMap = useMemo(() => {
     const map = new Map<string, NPCScheduleData>();
@@ -344,6 +357,7 @@ export function ScheduleEditor({
                             })
                           }
                           npcOptions={npcOptions}
+                          flagOptions={flagOptions}
                         />
                       </div>
 
@@ -436,6 +450,7 @@ export function ScheduleEditor({
                                     )
                                   }
                                   npcOptions={npcOptions}
+                                  flagOptions={flagOptions}
                                 />
                               </div>
 

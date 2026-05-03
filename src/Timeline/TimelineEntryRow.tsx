@@ -7,6 +7,8 @@ interface Props {
   onChange: (e: TimelineEntry) => void;
   onDelete: () => void;
   npcOptions: string[];
+  flagOptions: string[];
+  timelineOptions: string[];
   isExpanded: boolean;
   onToggle: () => void;
 }
@@ -17,9 +19,14 @@ export function TimelineEntryRow({
   onChange,
   onDelete,
   npcOptions,
+  flagOptions,
+  timelineOptions,
   isExpanded,
   onToggle,
 }: Props) {
+  const otherTimelineIds = timelineOptions.filter(
+    (id) => id !== entry.timeline,
+  );
   const hasConditions = Object.keys(entry.conditions).length > 0;
 
   return (
@@ -77,23 +84,45 @@ export function TimelineEntryRow({
           <div className="cond-grid">
             <div className="cond-row">
               <label className="cond-key">sets_flag</label>
-              <input
-                className="cond-val"
-                type="text"
-                placeholder="e_met_farmer"
-                value={entry.sets_flag ?? ""}
-                onChange={(e) =>
-                  onChange({
-                    ...entry,
-                    sets_flag: e.target.value || undefined,
-                  })
-                }
-              />
+              {flagOptions.length > 0 ? (
+                <select
+                  className="cond-val"
+                  value={entry.sets_flag ?? ""}
+                  onChange={(e) =>
+                    onChange({
+                      ...entry,
+                      sets_flag: e.target.value || undefined,
+                    })
+                  }
+                >
+                  <option value="">-- none --</option>
+                  {flagOptions.map((id) => (
+                    <option key={id} value={id}>
+                      {id}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  className="cond-val"
+                  type="text"
+                  placeholder="e_met_farmer"
+                  value={entry.sets_flag ?? ""}
+                  onChange={(e) =>
+                    onChange({
+                      ...entry,
+                      sets_flag: e.target.value || undefined,
+                    })
+                  }
+                />
+              )}
             </div>
             <ConditionsEditor
               conds={entry.conditions}
               onChange={(c) => onChange({ ...entry, conditions: c })}
               npcOptions={npcOptions}
+              flagOptions={flagOptions}
+              timelineOptions={otherTimelineIds}
             />
           </div>
         </div>

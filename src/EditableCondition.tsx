@@ -6,6 +6,7 @@ interface Props {
   condition: Condition | null | undefined;
   onChange: (newCondition: Condition | null) => void;
   npcOptions?: string[];
+  flagOptions?: string[];
 }
 
 const InlineInput: React.FC<{
@@ -48,6 +49,7 @@ export function EditableCondition({
   condition,
   onChange,
   npcOptions = [],
+  flagOptions = [],
 }: Props) {
   const typeOptions = [
     "Always",
@@ -125,10 +127,27 @@ export function EditableCondition({
         return (
           <span>
             Flag:{" "}
-            <InlineInput
-              value={condition.flag_name ?? ""}
-              onSave={(v) => onChange({ ...condition, flag_name: v })}
-            />
+            {flagOptions.length > 0 ? (
+              <select
+                className="inline-select"
+                value={condition.flag_name ?? ""}
+                onChange={(e) =>
+                  onChange({ ...condition, flag_name: e.target.value })
+                }
+              >
+                <option value="">-- choose --</option>
+                {flagOptions.map((id) => (
+                  <option key={id} value={id}>
+                    {id}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <InlineInput
+                value={condition.flag_name ?? ""}
+                onSave={(v) => onChange({ ...condition, flag_name: v })}
+              />
+            )}
           </span>
         );
       case "FriendshipCondition":
@@ -253,6 +272,7 @@ export function EditableCondition({
                     condition={sub}
                     onChange={(c) => updateSubCondition(idx, c)}
                     npcOptions={npcOptions}
+                    flagOptions={flagOptions}
                   />
                   <button
                     className="delete-btn small"
@@ -275,6 +295,7 @@ export function EditableCondition({
                 condition={condition.condition}
                 onChange={setNotCondition}
                 npcOptions={npcOptions}
+                flagOptions={flagOptions}
               />
             </div>
           )}

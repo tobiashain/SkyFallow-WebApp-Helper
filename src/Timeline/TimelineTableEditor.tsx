@@ -4,6 +4,7 @@ import type {
   ExportedTimelineEntry,
   TimelineTableFile,
 } from "./timelineTableEditorTypes";
+import type { FlagRegistry } from "../FlagRegistry/flagTypes";
 import {
   normalizeEntry,
   unflattenEntry,
@@ -14,6 +15,17 @@ import { TimelineEntryRow } from "./TimelineEntryRow";
 import "./TimelineTableEditor.scss";
 
 const STORAGE_KEY = "npc_timeline_table";
+
+function readFlagOptions(): string[] {
+  try {
+    const raw = localStorage.getItem("flag_registry");
+    if (!raw) return [];
+    const registry: FlagRegistry = JSON.parse(raw);
+    return registry.flags?.map((f) => f.id) ?? [];
+  } catch {
+    return [];
+  }
+}
 
 interface Props {
   npcOptions: string[];
@@ -33,6 +45,7 @@ export function TimelineTableEditor({ npcOptions }: Props) {
     () => [...new Set([...Object.keys(table), ...npcOptions])],
     [table, npcOptions],
   );
+  const flagOptions = useMemo(() => readFlagOptions(), []);
 
   // ── Persistence ────────────────────────────────────────────────────────
   // Helper: write current state to localStorage
@@ -239,6 +252,10 @@ export function TimelineTableEditor({ npcOptions }: Props) {
   const positiveEntries = currentEntries.filter((e) => e.weight !== -1);
   const totalWeight = positiveEntries.reduce((s, e) => s + (e.weight || 0), 0);
   const currentFallbacks = selectedNpc ? (fallbacks[selectedNpc] ?? []) : [];
+  const timelineOptions = useMemo(
+    () => currentEntries.map((e) => e.timeline).filter(Boolean),
+    [currentEntries],
+  );
 
   return (
     <div className="tl-editor">
@@ -350,6 +367,8 @@ export function TimelineTableEditor({ npcOptions }: Props) {
                   onChange={(e) => updateEntry(selectedNpc, idx, e)}
                   onDelete={() => deleteEntry(selectedNpc, idx)}
                   npcOptions={allNpcIds}
+                  flagOptions={flagOptions}
+                  timelineOptions={timelineOptions}
                 />
               ))}
               <button
