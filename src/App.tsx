@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import "./App.scss";
 import { FileImporter } from "./FileImporter";
 import type { NpcNavBaked, NpcSchedulesFile, TransformedScene } from "./types";
@@ -7,14 +7,55 @@ import { ScheduleEditor } from "./Schedules/Scheduleeditor";
 import { TimelineTableEditor } from "./Timeline/TimelineTableEditor";
 import { FlagRegistryEditor } from "./FlagRegistry/flagRegistryEditor";
 import { SaveEditor } from "./SaveEditor/SaveEditor";
+import { QuestEditor } from "./QuestEditor/QuestEditor";
 
-type Tab = "schedules" | "timelines" | "flags" | "save";
+type Tab = "schedules" | "timelines" | "flags" | "quests" | "save";
+
+interface JsonFileHandle {
+  createWritable: () => Promise<{
+    write: (data: string) => Promise<void>;
+    close: () => Promise<void>;
+  }>;
+}
+
+interface JsonSaveWindow extends Window {
+  showSaveFilePicker?: (options: {
+    suggestedName: string;
+    types: {
+      description: string;
+      accept: Record<string, string[]>;
+    }[];
+  }) => Promise<JsonFileHandle>;
+}
+
+function loadStoredBaked() {
+  const stored = localStorage.getItem("bakedData");
+  if (!stored) return null;
+  try {
+    return JSON.parse(stored) as NpcNavBaked;
+  } catch {
+    return null;
+  }
+}
+
+function loadStoredSchedules() {
+  const stored = localStorage.getItem("scheduleData");
+  if (!stored) return null;
+  try {
+    return JSON.parse(stored) as NpcSchedulesFile;
+  } catch {
+    return null;
+  }
+}
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>("schedules");
-  const [rawBaked, setRawBaked] = useState<NpcNavBaked | null>(null);
-  const [scenes, setScenes] = useState<TransformedScene[]>([]);
-  const [schedules, setSchedules] = useState<NpcSchedulesFile | null>(null);
+  const [rawBaked, setRawBaked] = useState<NpcNavBaked | null>(loadStoredBaked);
+  const [scenes, setScenes] = useState<TransformedScene[]>(() =>
+    rawBaked ? transformBakedData(rawBaked) : [],
+  );
+  const [schedules, setSchedules] =
+    useState<NpcSchedulesFile | null>(loadStoredSchedules);
 
   const allNpcs = scenes.flatMap((s) =>
     s.npcs.map((n) => ({ ...n, sceneName: s.name })),
@@ -23,15 +64,6 @@ function App() {
   const npcOptions = useMemo(() => allNpcs.map((n) => n.id), [allNpcs]);
 
   // ── Persistence ────────────────────────────────────────────────────────
-  useEffect(() => {
-    const savedBaked = localStorage.getItem("bakedData");
-    if (savedBaked) handleBakedImport(JSON.parse(savedBaked) as NpcNavBaked);
-
-    const savedSchedules = localStorage.getItem("scheduleData");
-    if (savedSchedules)
-      setSchedules(JSON.parse(savedSchedules) as NpcSchedulesFile);
-  }, []);
-
   const handleBakedImport = (data: NpcNavBaked) => {
     setRawBaked(data);
     setScenes(transformBakedData(data));
@@ -46,9 +78,10 @@ function App() {
   const exportSchedules = async () => {
     if (!schedules) return;
     const jsonString = JSON.stringify(schedules, null, 2);
-    if ("showSaveFilePicker" in window) {
+    const saveWindow = window as JsonSaveWindow;
+    if (saveWindow.showSaveFilePicker) {
       try {
-        const handle = await (window as any).showSaveFilePicker({
+        const handle = await saveWindow.showSaveFilePicker({
           suggestedName: "npc_schedules.json",
           types: [
             {
@@ -117,7 +150,7 @@ function App() {
 
       {/* ── Tab bar ── */}
       <nav className="tab-bar">
-        {(["schedules", "timelines", "flags", "save"] as Tab[]).map((tab) => (
+        {(["schedules", "timelines", "flags", "quests", "save"] as Tab[]).map((tab) => (
           <button
             key={tab}
             className={`tab-bar__tab ${activeTab === tab ? "tab-bar__tab--active" : ""}`}
@@ -128,6 +161,7 @@ function App() {
                 schedules: "NPC Schedules",
                 timelines: "Dialogic Timelines",
                 flags: "Flag Registry",
+                quests: "Quest Editor",
                 save: "Save Editor",
               }[tab]
             }
@@ -156,6 +190,12 @@ function App() {
       {activeTab === "flags" && (
         <main className="creator">
           <FlagRegistryEditor />
+        </main>
+      )}
+
+      {activeTab === "quests" && (
+        <main className="creator">
+          <QuestEditor />
         </main>
       )}
 

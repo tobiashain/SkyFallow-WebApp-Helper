@@ -119,7 +119,8 @@ body {
 
 select,
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+textarea {
   font: inherit;
   border: 1.5px solid var(--border);
   border-radius: 5px;
