@@ -75,7 +75,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 $env:WORKTREE_PATH = $worktree
-& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $worktree ".kilo/setup-script.ps1")
+& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "setup.ps1")
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Setup failed. The worktree was left at $worktree for inspection."
     exit $LASTEXITCODE
