@@ -38,11 +38,12 @@ interface JsonSaveWindow extends Window {
 // ── Templates ────────────────────────────────────────────────────────────────
 
 function makeShop(): ShopDefinition {
-  return { id: crypto.randomUUID(), display_name: "", description: "", entries: [] };
+  return { id: "", display_name: "", description: "", entries: [] };
 }
 
 function makeEntry(items: ItemCatalogItem[]): ShopEntry {
   return {
+    entry_id: crypto.randomUUID(),
     item_id: items.length > 0 ? items[0].id : "",
     item_description: "",
     price_override: null,
@@ -51,6 +52,19 @@ function makeEntry(items: ItemCatalogItem[]): ShopEntry {
     condition: null,
     sort_order: 0,
   };
+}
+
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 40);
+}
+
+function isValidShopId(id: string): boolean {
+  return /^[a-z0-9][a-z0-9_-]*$/.test(id);
 }
 
 // ── Normalization ────────────────────────────────────────────────────────────
@@ -72,6 +86,10 @@ function normalizeCatalog(raw: unknown): ItemCatalog {
 
 function normalizeEntry(raw: Partial<ShopEntry> & Record<string, unknown>): ShopEntry {
   return {
+    entry_id:
+      typeof raw.entry_id === "string" && raw.entry_id.trim() !== ""
+        ? raw.entry_id
+        : crypto.randomUUID(),
     item_id: typeof raw.item_id === "string" ? raw.item_id : "",
     item_description: typeof raw.item_description === "string" ? raw.item_description : "",
     price_override:
@@ -81,7 +99,7 @@ function normalizeEntry(raw: Partial<ShopEntry> & Record<string, unknown>): Shop
           ? raw.price_override
           : null,
     quantity: typeof raw.quantity === "number" ? raw.quantity : 10,
-    restock: ["none", "daily", "unlimited"].includes(String(raw.restock))
+    restock: ["none", "daily", "weekly", "unlimited"].includes(String(raw.restock))
       ? (raw.restock as RestockMode)
       : "none",
     condition: (raw.condition as Condition) ?? null,
@@ -161,6 +179,7 @@ export function ShopEditor() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editing, setEditing] = useState<ShopDefinition | null>(null);
   const [editingNew, setEditingNew] = useState(false);
+  const [idTouched, setIdTouched] = useState(false);
   const [error, setError] = useState("");
   const [dragIdx, setDragIdx] = useState<number | null>(null);
 
@@ -186,6 +205,7 @@ export function ShopEditor() {
     setEditing({ ...shop, entries: shop.entries.map((e) => ({ ...e })) });
     setSelectedId(shop.id);
     setEditingNew(false);
+    setIdTouched(true);
     setError("");
   }, []);
 
@@ -194,6 +214,7 @@ export function ShopEditor() {
     setEditing(draft);
     setSelectedId(draft.id);
     setEditingNew(true);
+    setIdTouched(false);
     setError("");
   }, []);
 
@@ -201,6 +222,7 @@ export function ShopEditor() {
     setSelectedId(null);
     setEditing(null);
     setEditingNew(false);
+    setIdTouched(false);
     setError("");
   }, []);
 
@@ -208,12 +230,24 @@ export function ShopEditor() {
     if (!editing) return;
     const cleaned: ShopDefinition = {
       ...editing,
+      id: editing.id.trim(),
       display_name: editing.display_name.trim(),
       description: editing.description.trim(),
       entries: editing.entries.map((e, i) => ({ ...e, sort_order: i })),
     };
     if (!cleaned.display_name) {
       setError("Shop name is required.");
+      return;
+    }
+    if (!isValidShopId(cleaned.id)) {
+      setError("Shop id is required: lowercase letters, digits, - or _ (must start with a letter or digit).");
+      return;
+    }
+    const duplicateId = shops.some(
+      (s) => s.id === cleaned.id && (editingNew || s.id !== editing.id),
+    );
+    if (duplicateId) {
+      setError("Shop id is already in use.");
       return;
     }
     const next = editingNew
@@ -224,6 +258,7 @@ export function ShopEditor() {
     setSelectedId(cleaned.id);
     setEditing(cleaned);
     setEditingNew(false);
+    setIdTouched(true);
     setError("");
   }, [editing, editingNew, shops, persistShops, version]);
 
@@ -421,11 +456,38 @@ export function ShopEditor() {
             </h3>
 
             <div className="se__field">
+              <label>ID</label>
+              <input
+                type="text"
+                value={editing.id}
+                placeholder="basic_shop"
+                onChange={(e) => {
+                  setIdTouched(true);
+                  setEditing({ ...editing, id: e.target.value.toLowerCase() });
+                }}
+              />
+              <p className="se__hint">
+                Used for the generated resource name and saved stock keys. Lowercase
+                letters, digits, - or _.
+              </p>
+            </div>
+
+            <div className="se__field">
               <label>Name</label>
               <input
                 type="text"
                 value={editing.display_name}
-                onChange={(e) => setEditing({ ...editing, display_name: e.target.value })}
+                onChange={(e) => {
+                  const display_name = e.target.value;
+                  setEditing({
+                    ...editing,
+                    display_name,
+                    id:
+                      editingNew && !idTouched
+                        ? slugify(display_name)
+                        : editing.id,
+                  });
+                }}
               />
             </div>
 
@@ -530,6 +592,7 @@ export function ShopEditor() {
                         >
                           <option value="none">Lifetime</option>
                           <option value="daily">Daily</option>
+                          <option value="weekly">Weekly</option>
                           <option value="unlimited">Unlimited</option>
                         </select>
                       </div>

@@ -43,6 +43,14 @@
 
 `src/types.ts` defines `Condition` union with types: `DayCondition`, `WeekdayCondition`, `FlagCondition`, `FriendshipCondition`, `AndCondition`, `OrCondition`, `NotCondition`. Timeline editor adds flattened convenience types (`DayFromCondition`, `HourRangeCondition`, `SeenFirstCondition`) merged into the tree on export.
 
+## Shop editor
+
+- Authored shop data lives in `shop_definitions.json` (`version` plus `shops`). The item catalog is imported read-only from the game; a drift test there guards it.
+- Each shop has a slug `id` using lowercase letters, digits, `-`, or `_`. It names the generated game resource and keys saved stock. New shops derive the id from the name until the field is edited; renaming a shop afterwards leaves the id alone.
+- Every entry has a stable `entry_id`, generated when the entry is created. It survives reordering and is what the game keys saved stock on.
+- Restock modes are Lifetime (`none`), `daily`, `weekly`, and `unlimited`. A shop may list the same item more than once (for example a cheap limited line beside an expensive unlimited one); entry ids keep those lines distinct.
+- Entries are ordered by array position; the game generator derives `sort_order` from it, so drag-and-drop is the ordering mechanism.
+
 ## Conventions
 
 - Sass (SCSS) per-component — files co-located with components (e.g. `src/Schedules/scheduleEditor.scss`).
