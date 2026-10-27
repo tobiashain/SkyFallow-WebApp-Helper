@@ -13,9 +13,10 @@ export interface ItemCatalog {
   items: ItemCatalogItem[];
 }
 
-export type RestockMode = "none" | "daily" | "unlimited";
+export type RestockMode = "none" | "daily" | "weekly" | "unlimited";
 
 export interface ShopEntry {
+  entry_id: string;
   item_id: string;
   item_description: string;
   price_override: number | null;
