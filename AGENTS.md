@@ -28,9 +28,9 @@
 
 ## Architecture
 
-- **Entrypoint**: `src/main.tsx` → `src/App.tsx`. Four tabs: Schedules, Timelines, Flag Registry, Save Editor.
+- **Entrypoint**: `src/main.tsx` → `src/App.tsx`. Six tabs: Schedules, Timelines, Flag Registry, Quest Editor, Save Editor, Shop Editor.
 - **No router, no API, no backend**. Entirely client-side. No tests, no CI.
-- **All state persisted to `localStorage`** (keys: `bakedData`, `scheduleData`, `npc_timeline_table`, `flag_registry`).
+- **All state persisted to `localStorage`** (keys: `bakedData`, `scheduleData`, `npc_timeline_table`, `flag_registry`, `quest_data`, `item_catalog`, `shop_definitions`).
 - Import/export JSON via drag-and-drop (`FileImporter`) or `showSaveFilePicker` / download fallback.
 
 ## Data flow

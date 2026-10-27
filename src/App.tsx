@@ -8,8 +8,9 @@ import { TimelineTableEditor } from "./Timeline/TimelineTableEditor";
 import { FlagRegistryEditor } from "./FlagRegistry/flagRegistryEditor";
 import { SaveEditor } from "./SaveEditor/SaveEditor";
 import { QuestEditor } from "./QuestEditor/QuestEditor";
+import { ShopEditor } from "./ShopEditor/ShopEditor";
 
-type Tab = "schedules" | "timelines" | "flags" | "quests" | "save";
+type Tab = "schedules" | "timelines" | "flags" | "quests" | "save" | "shops";
 
 interface JsonFileHandle {
   createWritable: () => Promise<{
@@ -150,7 +151,7 @@ function App() {
 
       {/* ── Tab bar ── */}
       <nav className="tab-bar">
-        {(["schedules", "timelines", "flags", "quests", "save"] as Tab[]).map((tab) => (
+        {(["schedules", "timelines", "flags", "quests", "save", "shops"] as Tab[]).map((tab) => (
           <button
             key={tab}
             className={`tab-bar__tab ${activeTab === tab ? "tab-bar__tab--active" : ""}`}
@@ -163,6 +164,7 @@ function App() {
                 flags: "Flag Registry",
                 quests: "Quest Editor",
                 save: "Save Editor",
+                shops: "Shop Editor",
               }[tab]
             }
           </button>
@@ -202,6 +204,12 @@ function App() {
       {activeTab === "save" && (
         <main className="creator">
           <SaveEditor />
+        </main>
+      )}
+
+      {activeTab === "shops" && (
+        <main className="creator">
+          <ShopEditor />
         </main>
       )}
     </>
