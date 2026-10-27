@@ -1,0 +1,359 @@
+.se {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+
+  // ── Toolbar ──────────────────────────────────────────────────────────────
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border-bottom: 1.5px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  &__import-btn,
+  &__export-btn,
+  &__cancel-btn,
+  &__add-entry-btn {
+    padding: 5px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 5px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    background: var(--surface);
+
+    &:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+  }
+
+  &__add-btn,
+  &__save-btn {
+    padding: 5px 14px;
+    background: var(--text);
+    color: var(--surface);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    &:hover {
+      background: #3d3530;
+    }
+  }
+
+  &__add-btn {
+    margin-left: auto;
+  }
+
+  // ── Body ─────────────────────────────────────────────────────────────────
+
+  &__body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  &__sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    border-right: 1.5px solid var(--border);
+    background: #faf9f7;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  &__empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 16px;
+    font-size: 13px;
+  }
+
+  &__shop-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #f0ece6;
+    cursor: pointer;
+    transition: background 0.1s;
+
+    &:hover {
+      background: #fdf8f2;
+    }
+
+    &--active {
+      background: #fff4d9;
+    }
+  }
+
+  &__shop-row-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__shop-name {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__shop-meta {
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  // ── Panel ────────────────────────────────────────────────────────────────
+
+  &__panel {
+    flex: 1;
+    background: var(--surface);
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  &__panel-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+    }
+
+    textarea {
+      min-height: 60px;
+      resize: vertical;
+    }
+  }
+
+  &__hint {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  // ── Entries ──────────────────────────────────────────────────────────────
+
+  &__entries {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 5px;
+    background: #faf9f7;
+    cursor: grab;
+
+    &--dragging {
+      opacity: 0.4;
+    }
+  }
+
+  &__drag-handle {
+    cursor: grab;
+    color: var(--muted);
+    font-size: 16px;
+    padding-top: 3px;
+    flex-shrink: 0;
+    user-select: none;
+  }
+
+  &__entry-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__entry-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    &--prices {
+      align-items: flex-start;
+    }
+  }
+
+  &__item-select {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  &__desc-input {
+    flex: 1;
+  }
+
+  &__price-group,
+  &__qty-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+
+    input {
+      width: 80px;
+    }
+  }
+
+  &__price-hint {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  &__cond-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+
+  &__warn {
+    font-size: 10px;
+    color: var(--orange);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  &__add-entry-btn {
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+
+  // ── Error ────────────────────────────────────────────────────────────────
+
+  &__error {
+    font-size: 11px;
+    color: var(--pink);
+    font-weight: 600;
+  }
+
+  &__panel-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  &__save-btn {
+    flex: 1;
+    background: var(--teal);
+
+    &:hover {
+      filter: brightness(0.9);
+      background: var(--teal);
+    }
+  }
+
+  // ── Footer ───────────────────────────────────────────────────────────────
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px;
+    background: #faf9f7;
+    border-top: 1.5px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+
+  &__version-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    input[type="number"] {
+      width: 60px;
+      padding: 2px 6px;
+      font-size: 11px;
+    }
+  }
+}
+
+@media (max-width: 800px) {
+  .se {
+    &__body {
+      flex-direction: column;
+      overflow: visible;
+    }
+
+    &__sidebar {
+      width: 100%;
+      max-height: 200px;
+      border-right: 0;
+      border-bottom: 1.5px solid var(--border);
+    }
+
+    &__panel {
+      min-width: 0;
+    }
+  }
+}
